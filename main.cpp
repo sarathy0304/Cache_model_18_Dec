@@ -8,7 +8,7 @@ int main() {
     bool autogen;
     char temp;
     int valid_array[c.tag -1][c.no_of_sets];
-    std::vector<int> address;
+    std::vector<unsigned int> address;
     std::ifstream f;
     std::string line;
     std::cout<<"Auto Generate Address? Y/N"<<std::endl;
@@ -39,5 +39,7 @@ int main() {
         }
         f.close();
     }
+
+
 
 }
