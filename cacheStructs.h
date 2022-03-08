@@ -23,6 +23,7 @@ public:
     int tag;
     int index;
     int no_of_blocks;
+
     int getCacheSize() const {
         return cacheSize;
     }
@@ -63,8 +64,8 @@ public:
      */
     cache(){
         cacheSize = 512*1024*8;
-        noOfWays = 2;
-        blockSize = 128;
+        noOfWays = 8;
+        blockSize = 256;
         addrSize = 32;
         calculateTagSize();
     }
