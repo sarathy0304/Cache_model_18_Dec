@@ -63,15 +63,34 @@ int main() {
         rand();
         std::stringstream ss;
         unsigned int temp_address;
+        unsigned int prev_addr;
         for(int i = 0; i < noOfAddress ; i++) {
+            bool reuse_addr = (float)rand()/RAND_MAX < 0.6 ? 1: 0 ;
+            std::cout << " reuse_addr is " << reuse_addr << std::endl;
+            if(reuse_addr) {
 
-            temp_address = rand() % 4294967295;
+                temp_address = prev_addr + 64;
+                prev_addr = temp_address;
+                std::cout << " Address Generated is " << temp_address << std::endl;
+            }
+            else {
+                temp_address = rand() % 4294967295; // Address that are 32 bit addressable
+                prev_addr = temp_address;Y
+                std::cout << " Address Generated is " << temp_address << std::endl;
+            }
+            /*
+             * Idea 1: Divide the addr space into N sectors. Each addr rand will happen within that addr sector, forcing reuse
+             * Idea 2: When an addr is picked, also pick close by addresses and push into queue. have a counter and repeat
+             * +/- 10 address for 20 times before moving to a different random address
+             * Idea 3: 
+             */
+
             temp_address = temp_address/64; // Word addressable -- Address from Processor;
             temp_address = temp_address/(c.getBlockSize()/64); // Cache addressable
             std::cout << temp_address << std::endl;
             ss << std::hex << temp_address;
             std::string address_str (ss.str());
-            std::cout << " Address in String " << address_str << std::endl;
+            //std::cout << " Address in String " << address_str << std::endl;
             if(f.is_open()) {
                 f<<address_str<<std::endl;
             }
@@ -83,7 +102,7 @@ int main() {
     }
     for(auto itr = address.begin(); itr !=  address.end() ; itr++) {
         bit_addr = std::strtoul(itr->c_str(), nullptr,16);
-        std::cout << "ADDR in bitset is "  << bit_addr << std::endl;
+        //std::cout << "ADDR in bitset is "  << bit_addr << std::endl;
         int block_addr;
         int tag;
         int index;
@@ -101,7 +120,7 @@ int main() {
             if(valid_array[index][jj] == 1) {
                 if(tag_array[index][jj] == tag) {
                     hit_flag = true;
-                    std::cout << "READ HIT for Address " << itr->c_str() << std::endl;
+                    //std::cout << "READ HIT for Address " << itr->c_str() << std::endl;
                     break;
                 }
                 //capacity_miss &= capacity_miss;
@@ -109,21 +128,21 @@ int main() {
             else {
                 available_way = true;
                 wayIndex = jj;
-                std::cout << "There is a available way to place this line way index " << jj << std::endl;
+                //std::cout << "There is a available way to place this line way index " << jj << std::endl;
 
             }
         }
 
         if(!hit_flag) {
             if(available_way){
-                std::cout << "READ MISS for Address " << itr->c_str() << std::endl;
+                //std::cout << "READ MISS for Address " << itr->c_str() << std::endl;
                 tot_read_miss += 1;
                 valid_array[index][wayIndex] = 1;
                 tag_array[index][wayIndex] = tag;
             }
             else {
                 int rand_way_index = rand() % c.getNoOfWays();
-                std::cout << "READ MISS for address " << itr->c_str() << " Randomly choosing wayIndex "<< rand_way_index << std::endl;
+                //std::cout << "READ MISS for address " << itr->c_str() << " Randomly choosing wayIndex "<< rand_way_index << std::endl;
                 tot_capacity_miss += 1;
                 valid_array[index][rand_way_index] = 1;
                 tag_array[index][rand_way_index] = tag;
